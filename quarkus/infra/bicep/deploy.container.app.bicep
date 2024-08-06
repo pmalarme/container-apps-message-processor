@@ -116,7 +116,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
           }
           env: [
             {
-              name: 'SERVICE_BUS_CONNECTION_STRING'
+              name: 'QUARKUS_SERVICE_BUS_CONNECTION_STRING'
               secretRef: 'service-bus-connection-string'
             }
           ]

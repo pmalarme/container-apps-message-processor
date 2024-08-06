@@ -70,9 +70,11 @@ CONTAINER_REGISTRY_NAME=${CONTAINER_REGISTRY_NAME:-"crquarkusfunctions$(cat /dev
 SERVICE_BUS_NAMESPACE_NAME=${SERVICE_BUS_NAMESPACE_NAME:-"sbns-quarkus-functions"}
 SERVICE_BUS_QUEUE_NAME=${SERVICE_BUS_QUEUE_NAME:-"sbq-quarkus-functions"}
 CONTAINER_APP_ENVIRONMENT=${CONTAINER_APP_ENVIRONMENT:-"cae-quarkus-functions"}
+STORAGE_ACCOUNT_NAME=${STORAGE_ACCOUNT_NAME:-"stquarkusfunctions"}
 LOG_ANALYTICS_WORKSPACE_NAME=${LOG_ANALYTICS_WORKSPACE_NAME:-"log-quarkus-functions"}
 MAIN_SERVICE_TOPIC_NAME=${MAIN_SERVICE_TOPIC_NAME:-"sbt-incoming-messages"}
 MESSAGES_ON_MAIN_TOPIC_FOR_QUARKUS_SUBSCRIPTION_NAME=${MESSAGES_ON_MAIN_TOPIC_FOR_QUARKUS_SUBSCRIPTION_NAME:-"sbts-all-incoming-messages-quarkus"}
+FUNCTION_APP_NAME=${FUNCTION_APP_NAME:-"func-quarkus-functions"}
 
 DEPLOYMENT_NAME=${DEPLOYMENT_NAME:-"java-function-quarkus-deployment"}
 CONTAINER_APP_DEPLOYMENT_NAME=${CONTAINER_APP_DEPLOYMENT_NAME:-"quarkus-container-app-deployment"}
@@ -87,6 +89,25 @@ display_message INFO "Location: $LOCATION"
 display_message INFO "Deployment Name: $DEPLOYMENT_NAME"
 display_message INFO "Environment Name: $ENVIRONMENT_NAME"
 
+display_blank_line
+
+# Update Azure CLI
+display_progress "Updating Azure CLI..."
+az upgrade --yes --output none
+display_message SUCCESS "  Azure CLI updated successfully."
+
+# Install AZ CLI extensions for Azure Container Apps
+display_progress "Installing Azure CLI extensions for Azure Container Apps..."
+az extension add --name containerapp --upgrade -y
+display_message SUCCESS "  Azure CLI extensions for Azure Container Apps installed successfully."
+
+# Register Azure Providers
+display_progress "Registering Azure providers..."
+az provider register --namespace Microsoft.Web 
+az provider register --namespace Microsoft.App 
+az provider register --namespace Microsoft.OperationalInsights
+az provider register --namespace Microsoft.ServiceBus
+display_message SUCCESS "  Azure providers registered successfully."
 display_blank_line
 
 # Create Resource Group
@@ -117,12 +138,12 @@ display_blank_line
 
 # Build and push Docker image
 display_progress "Building Docker image..."
-mvn clean install -D"quarkus.container-image.build"=true -DskipTests=true -D"quarkus.container-image.image"="$CONTAINER_REGISTRY_FQDN/$IMAGE_NAME:$IMAGE_TAG"
+mvn clean install -D"quarkus.container-image.build"=true -DskipTests=true -D"quarkus.container-image.image"="$CONTAINER_REGISTRY_FQDN/$IMAGE_NAME:$IMAGE_TAG" > /dev/null 2>&1
 display_message SUCCESS "  Docker image built successfully."
 
 display_progress "Pushing Docker image to Container Registry..."
 az acr login --name $CONTAINER_REGISTRY
-docker push $CONTAINER_REGISTRY_FQDN/$IMAGE_NAME:$IMAGE_TAG
+docker push $CONTAINER_REGISTRY_FQDN/$IMAGE_NAME:$IMAGE_TAG > /dev/null 2>&1
 display_message SUCCESS "  Docker image pushed to Container Registry successfully."
 display_blank_line
 
@@ -138,8 +159,7 @@ az deployment group create \
     containerRegistryName=$CONTAINER_REGISTRY \
     serviceBusName=$SERVICE_BUS \
     mainServiceBusTopicName=$MAIN_SERVICE_TOPIC_NAME \
-    allMessagesOnMainTopicForQuarkusSubscriptionName=$MESSAGES_ON_MAIN_TOPIC_FOR_QUARKUS_SUBSCRIPTION_NAME 
-  --output none
+    allMessagesOnMainTopicForQuarkusSubscriptionName=$MESSAGES_ON_MAIN_TOPIC_FOR_QUARKUS_SUBSCRIPTION_NAME
 display_message SUCCESS "  Container app deployed successfully."
 display_blank_line
 

@@ -19,7 +19,7 @@ import io.quarkus.runtime.StartupEvent;
 public class ProcessMessage {
   private static final Logger LOGGER = Logger.getLogger("ListenerBean");
   // Service Bus
-  private static final String SERVICE_BUS_CONNECTION_STRING = System.getenv("SERVICE_BUS_CONNECTION_STRING");
+  private static final String SERVICE_BUS_CONNECTION_STRING = System.getenv("QUARKUS_SERVICE_BUS_CONNECTION_STRING");
   private final static String TOPIC_NAME = "sbt-incoming-messages";
   private final static String SUBSCRIPTION_NAME = "sbts-all-incoming-messages-quarkus";
 
@@ -48,6 +48,10 @@ public class ProcessMessage {
       .topicName(TOPIC_NAME)
       .subscriptionName(SUBSCRIPTION_NAME)
       .processError(context -> processError(context, countdownLatch))
+      .processMessage(context -> {
+        LOGGER.info("Received message: " + context.getMessage().getMessageId());
+        context.complete();
+      })
       .buildProcessorClient();
     this.processorClient = processorClient;
 
