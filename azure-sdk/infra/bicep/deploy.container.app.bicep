@@ -71,13 +71,12 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2022-10-01'
   name: containerAppsEnvironmentName
 }
 
-resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
+resource containerApp 'Microsoft.App/jobs@2024-03-01' = {
   name: containerAppName
   location: location
   properties: {
-    managedEnvironmentId: containerAppsEnvironment.id
+    environmentId: containerAppsEnvironment.id
     configuration:{
-      activeRevisionsMode: 'Single'
       secrets: [
         {
           name: 'service-bus-connection-string'
@@ -95,6 +94,35 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
           passwordSecretRef: 'container-registry-password'
         }
       ]
+      replicaRetryLimit: 3
+      eventTriggerConfig: {
+        parallelism: 1
+        replicaCompletionCount: 1
+        scale: {
+          maxExecutions: 10
+          minExecutions: 0
+          pollingInterval: 30
+          rules: [
+            {
+              name: 'scale-on-incoming-messages'
+              type: 'azure-servicebus'
+              auth: [
+                {
+                  secretRef: 'service-bus-connection-string'
+                  triggerParameter: 'connection'
+                }
+              ]
+              metadata: {
+                namespace: serviceBusNamespace.name
+                queueName: serviceBusQueue.name
+                messageCount: '10'
+              }
+            }
+          ]
+        }
+      }
+      replicaTimeout: 60
+      triggerType: 'Event'
     }
     template: {
       containers: [
@@ -117,28 +145,6 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
           ]
         }
       ]
-      scale: {
-        minReplicas: 2
-        maxReplicas: 30
-        rules: [
-          {
-            name: 'scale-on-incoming-messages'
-            custom: {
-              type: 'azure-servicebus'
-              auth: [
-                {
-                  secretRef: 'service-bus-connection-string'
-                  triggerParameter: 'connection'
-                }
-              ]
-              metadata: {
-                queueName: serviceBusQueueName
-                messageCount: '10'
-              }
-            }
-          }
-        ]
-      }
     }
   }
 }

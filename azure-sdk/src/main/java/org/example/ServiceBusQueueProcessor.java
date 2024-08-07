@@ -18,5 +18,7 @@ public class ServiceBusQueueProcessor {
             System.out.println("Processing message: " + message.getBody().toString());
             receiver.complete(message);
         });
+
+        receiver.close();
     }
 }
