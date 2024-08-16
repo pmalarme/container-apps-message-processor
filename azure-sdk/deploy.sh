@@ -73,7 +73,7 @@ CONTAINER_APP_ENVIRONMENT=${CONTAINER_APP_ENVIRONMENT:-"cae-azuresdk-functions"}
 LOG_ANALYTICS_WORKSPACE_NAME=${LOG_ANALYTICS_WORKSPACE_NAME:-"log-azuresdk-functions"}
 
 DEPLOYMENT_NAME=${DEPLOYMENT_NAME:-"java-function-azuresdk-deployment"}
-CONTAINER_APP_DEPLOYMENT_NAME=${CONTAINER_APP_DEPLOYMENT_NAME:-"azuresdk-container-app-deployment"}
+CONTAINER_APP_DEPLOYMENT_NAME=${CONTAINER_APP_DEPLOYMENT_NAME:-"container-app-azuresdk-deployment"}
 
 IMAGE_NAME=${IMAGE_NAME:-"azuresdk-function-examples"}
 IMAGE_TAG=${IMAGE_TAG:-"1.0"}
@@ -134,8 +134,8 @@ display_blank_line
 
 # Build and push Docker image
 display_progress "Building Docker image..."
-mvn clean install -D"azuresdk.container-image.build"=true -DskipTests=true
-docker build -t $CONTAINER_REGISTRY_FQDN/$IMAGE_NAME:$IMAGE_TAG .
+mvn clean install -D"azuresdk.container-image.build"=true -DskipTests=true > /dev/null 2>&1
+docker build -t $CONTAINER_REGISTRY_FQDN/$IMAGE_NAME:$IMAGE_TAG . > /dev/null 2>&1
 display_message SUCCESS "  Docker image built successfully."
 
 display_progress "Pushing Docker image to Container Registry..."
