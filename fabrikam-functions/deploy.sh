@@ -65,8 +65,8 @@ display_blank_line() {
 RESOURCE_GROUP_NAME=${RESOURCE_GROUP_NAME:-"rg-fabrikam-functions"}
 LOCATION=${LOCATION:-"eastus"}
 CONTAINER_REGISTRY_NAME=${CONTAINER_REGISTRY_NAME:-"crfabrikamfunctions$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)"}
-STORAGE_ACCOUNT_NAME=${STORAGE_ACCOUNT_NAME:-"stfabrikamfunctions"}
-SERVICE_BUS_NAMESPACE_NAME=${SERVICE_BUS_NAMESPACE_NAME:-"sbns-fabrikam-functions"}
+STORAGE_ACCOUNT_NAME=${STORAGE_ACCOUNT_NAME:-"stfabrikamfunctions$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)"}
+SERVICE_BUS_NAMESPACE_NAME=${SERVICE_BUS_NAMESPACE_NAME:-"sbns-fabrikam-functions-$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)"}
 SERVICE_BUS_QUEUE_NAME=${SERVICE_BUS_QUEUE_NAME:-"sbq-fabrikam-functions"}
 CONTAINER_APP_ENVIRONMENT=${CONTAINER_APP_ENVIRONMENT:-"cae-fabrikam-functions"}
 FUNCTION_APP_NAME=${FUNCTION_APP_NAME:-"func-fabrikam-functions"}
