@@ -21,9 +21,9 @@ public class Function {
   @ServiceBusQueueTrigger(
   name = "message",
   queueName = "sbq-fabrikam-functions",
-  connection = "FABRIKAM_SERVICE_BUS_CONNECTION_STRING")
+  connection = "SERVICE_BUS_CONNECTION_STRING")
   String message,
   final ExecutionContext context) {
-    context.getLogger().info("Java Service Bus queue trigger function processed message: " + message);
+    context.getLogger().info("Received message: " + message);
   }
 }

@@ -62,17 +62,17 @@ display_blank_line() {
 #                                  DEPLOYMENT                                  #
 # ---------------------------------------------------------------------------- #
 
-RESOURCE_GROUP_NAME=${RESOURCE_GROUP_NAME:-"rg-fabrikam-functions"}
+RESOURCE_GROUP_NAME=${RESOURCE_GROUP_NAME:-"rg-fabrikam-function"}
 LOCATION=${LOCATION:-"eastus"}
-CONTAINER_REGISTRY_NAME=${CONTAINER_REGISTRY_NAME:-"crfabrikamfunctions$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)"}
-STORAGE_ACCOUNT_NAME=${STORAGE_ACCOUNT_NAME:-"stfabrikamfunctions$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)"}
-SERVICE_BUS_NAMESPACE_NAME=${SERVICE_BUS_NAMESPACE_NAME:-"sbns-fabrikam-functions-$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)"}
-SERVICE_BUS_QUEUE_NAME=${SERVICE_BUS_QUEUE_NAME:-"sbq-fabrikam-functions"}
-CONTAINER_APP_ENVIRONMENT=${CONTAINER_APP_ENVIRONMENT:-"cae-fabrikam-functions"}
-FUNCTION_APP_NAME=${FUNCTION_APP_NAME:-"func-fabrikam-functions"}
+CONTAINER_REGISTRY_NAME=${CONTAINER_REGISTRY_NAME:-"crfabrikamfunction$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)"}
+STORAGE_ACCOUNT_NAME=${STORAGE_ACCOUNT_NAME:-"stfabrikamfunction$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)"}
+SERVICE_BUS_NAMESPACE_NAME=${SERVICE_BUS_NAMESPACE_NAME:-"sbns-fabrikam-function-$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 5 | head -n 1)"}
+SERVICE_BUS_QUEUE_NAME=${SERVICE_BUS_QUEUE_NAME:-"sbq-fabrikam-function"}
+CONTAINER_APP_ENVIRONMENT=${CONTAINER_APP_ENVIRONMENT:-"cae-fabrikam-function"}
+FUNCTION_APP_NAME=${FUNCTION_APP_NAME:-"func-fabrikam-function"}
 
-IMAGE_NAME=${IMAGE_NAME:-"fabrikam-functions"}
-IMAGE_TAG=${IMAGE_TAG:-"v1.0.0"}
+IMAGE_NAME=${IMAGE_NAME:-"fabrikam-function-example"}
+IMAGE_TAG=${IMAGE_TAG:-"1.0"}
 
 # Intro
 display_progress "Deploying infrastructure for Fabrikam Functions..."
@@ -165,23 +165,23 @@ display_blank_line
 # Create Function App
 display_progress "Creating Function App..."
 az functionapp create \
-    --name $FUNCTION_APP_NAME \
-    --resource-group $RESOURCE_GROUP_NAME \
-    --environment $CONTAINER_APP_ENVIRONMENT \
-    --workload-profile-name "Consumption" \
-    --storage-account $STORAGE_ACCOUNT_NAME \
-    --functions-version "4" \
-    --runtime "Java" \
-    --image $CONTAINER_REGISTRY_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG \
-    --registry-server $CONTAINER_REGISTRY_NAME.azurecr.io \
-    --registry-username $_username \
-    --registry-password $_password \
-    --min-replicas 1 \
-    --max-replicas 10 \
-    --output none
+  --name $FUNCTION_APP_NAME \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --environment $CONTAINER_APP_ENVIRONMENT \
+  --workload-profile-name "Consumption" \
+  --storage-account $STORAGE_ACCOUNT_NAME \
+  --functions-version "4" \
+  --runtime "Java" \
+  --image $CONTAINER_REGISTRY_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG \
+  --registry-server $CONTAINER_REGISTRY_NAME.azurecr.io \
+  --registry-username $_username \
+  --registry-password $_password \
+  --min-replicas 1 \
+  --max-replicas 10 \
+  --output none
 display_message SUCCESS "  Function App created successfully."
 
 display_progress "Setting Service Bus connection string..."
-az functionapp config appsettings set --name $FUNCTION_APP_NAME --resource-group $RESOURCE_GROUP_NAME --settings FABRIKAM_SERVICE_BUS_CONNECTION_STRING="$SERVICE_BUS_CONNECTION_STRING" --output none
+az functionapp config appsettings set --name $FUNCTION_APP_NAME --resource-group $RESOURCE_GROUP_NAME --settings SERVICE_BUS_CONNECTION_STRING="$SERVICE_BUS_CONNECTION_STRING" --output none
 display_message SUCCESS "  Service Bus connection string set successfully."
 display_blank_line

@@ -15,8 +15,8 @@ Below are the parameters that can be configured in the `deploy.sh` script. You c
 | `RESOURCE_GROUP_NAME`         | `rg-fabrikam-functions`                            | Name of the resource group                       |
 | `LOCATION`                    | `eastus`                                           | Location for the resources                       |
 | `CONTAINER_REGISTRY_NAME`     | `crfabrikamfunctions<random-string>`               | Name of the container registry                   |
-| `STORAGE_ACCOUNT_NAME`        | `stfabrikamfunctions`                              | Name of the storage account                      |
-| `SERVICE_BUS_NAMESPACE_NAME`  | `sbns-fabrikam-functions`                          | Name of the service bus namespace                |
+| `STORAGE_ACCOUNT_NAME`        | `stfabrikamfunctions<random-string>`                              | Name of the storage account                      |
+| `SERVICE_BUS_NAMESPACE_NAME`  | `sbns-fabrikam-functions<random-string>`                          | Name of the service bus namespace                |
 | `SERVICE_BUS_QUEUE_NAME`      | `sbq-fabrikam-functions`                           | Name of the service bus queue                    |
 | `CONTAINER_APP_ENVIRONMENT`   | `cae-fabrikam-functions`                           | Name of the container app environment            |
 | `FUNCTION_APP_NAME`           | `func-fabrikam-functions`                          | Name of the function app                         |
