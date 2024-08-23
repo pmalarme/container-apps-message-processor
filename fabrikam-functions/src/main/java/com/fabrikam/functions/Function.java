@@ -1,16 +1,8 @@
 package com.fabrikam.functions;
 
 import com.microsoft.azure.functions.ExecutionContext;
-import com.microsoft.azure.functions.HttpMethod;
-import com.microsoft.azure.functions.HttpRequestMessage;
-import com.microsoft.azure.functions.HttpResponseMessage;
-import com.microsoft.azure.functions.HttpStatus;
-import com.microsoft.azure.functions.annotation.AuthorizationLevel;
 import com.microsoft.azure.functions.annotation.FunctionName;
-import com.microsoft.azure.functions.annotation.HttpTrigger;
 import com.microsoft.azure.functions.annotation.ServiceBusQueueTrigger;
-
-import java.util.Optional;
 
 /**
 * Azure Functions rto process messages from a Service Bus queue.
@@ -29,9 +21,9 @@ public class Function {
   @ServiceBusQueueTrigger(
   name = "message",
   queueName = "sbq-fabrikam-functions",
-  connection = "FABRIKAM_SERVICE_BUS_CONNECTION_STRING")
+  connection = "SERVICE_BUS_CONNECTION_STRING")
   String message,
   final ExecutionContext context) {
-    context.getLogger().info("Java Service Bus queue trigger function processed message: " + message);
+    context.getLogger().info("Received message: " + message);
   }
 }
